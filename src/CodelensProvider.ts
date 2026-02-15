@@ -14,9 +14,10 @@ export class CodelensProvider implements vscode.CodeLensProvider {
     // Improved regex using backreferences
     // Detects 'run' at line start or with space before
     // Supports triple backticks for multi-line commands
+    // Optionally ignores language specifiers (bash, python, etc.) after triple backticks
     // Captures: optional terminal name, backticks (1-3), command (can be multi-line with ```), optional custom display name in parentheses
-    // Examples: run `cmd`, run test`cmd`, run `cmd`(Custom), run terminal```cmd```, run ```npm install```(Name)
-    this.regex = /(?:^|\s)run\s+(?:([\w-]+))?(`{1,3})([\s\S]*?)\2(?:\((.*?)\))?/gim;
+    // Examples: run `cmd`, run test`cmd`, run `cmd`(Custom), run terminal```cmd```, run ```npm install```(Name), run ```bash\ncurl...```
+    this.regex = /(?:^|\s)run\s+(?:([\w-]+))?(`{1,3})(?:[\w-]+\s*)?([\s\S]*?)\2(?:\((.*?)\))?/gim;
 
     vscode.workspace.onDidChangeConfiguration((_) => {
       this._onDidChangeCodeLenses.fire();

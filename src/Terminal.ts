@@ -74,7 +74,7 @@ export class Terminal {
       }
 
       if (!term) {
-        term = vscode.window.createTerminal(`Command Runner: ${name}`);
+        term = vscode.window.createTerminal(name ? name : 'Command Runner');
         Terminal.namedTerminals.set(name, term);
       }
       term.show(true);
@@ -171,6 +171,7 @@ export class Terminal {
         term = Terminal._getDefaultTerm();
       }
 
+      console.log(processedCommand);
       // Check if command has multiple lines
       const lines = processedCommand.split(/\r?\n/).filter(line => line.trim() !== '');
       
@@ -178,6 +179,9 @@ export class Terminal {
         // Execute each line separately to simulate pasting multiple commands
         let commandToSend = '';
         for (const line of lines) {
+          if (line.trim() === '' || line.trim().startsWith('#') || line.trim().startsWith('//') || line.trim().startsWith('--') || line.trim().startsWith('REM')) {
+            continue;
+          }
           commandToSend += line.trim() + ';'; // Use semicolon to separate commands, because new lines execute immediately
         }
         term.sendText(commandToSend, true);

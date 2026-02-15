@@ -1,13 +1,13 @@
 # Commands to Develop and Test the Extension
 
 ## Initial Installation
-Install dependencies: run `npm install`
+Install dependencies: run `npm install`(Install dependencies)
 
 ## Development
 
 You just need to run the program from **debug mode** to open a new VSC window and see the extension there.
 
- run test`npm run test`(Test)
+ run test`npm run test`(Run tests)
 
 ## Package Extension to VSIX
 

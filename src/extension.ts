@@ -69,7 +69,7 @@ function updateDecorations(editor: TextEditor | undefined) {
   }
 
   const document = editor.document;
-  const regex = /(?:^|\s)run\s+(?:([\w-]+))?(`{1,3})([\s\S]*?)\2(?:\((.*?)\))?/gim;
+  const regex = /(?:^|\s)run\s+(?:([\w-]+))?(`{1,3})(?:[\w-]+\s*)?([\s\S]*?)\2(?:\((.*?)\))?/gim;
   const decorations: {range: Range, hoverMessage?: string}[] = [];
   const text = document.getText();
   let matches;
