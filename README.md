@@ -4,7 +4,7 @@ Fork of https://github.com/zvikarp/command-runner
 
 With this extension, you can run code snippets from markdown and plaintext files with powerful customization options.
 
-<img width="735" alt="image" src="https://github.com/user-attachments/assets/54d20f0f-edc9-49c7-b7cf-ed1ecaab2258" />
+<img width="756" alt="Screenshot 2026-04-04 123542" src="https://github.com/user-attachments/assets/9ecd01da-09b6-48cb-8054-9915b1e7e00b" />
 
 
 ## How to Use
