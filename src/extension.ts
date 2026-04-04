@@ -76,7 +76,7 @@ function updateDecorations(editor: TextEditor | undefined) {
   }
 
   const document = editor.document;
-  const regex = /(?:^|\s)run\s+(?:([\w-]+))?(`{1,3})(?:[\w-]+\s*)?([\s\S]*?)\2(?:\((.*?)\))?/gim;
+  const regex = /(?:^|\s)run\s+(?:([\w-]+))?(`{1,3})([\s\S]*?)\2(?:\((.*?)\))?/gim;
   const decorations: {range: Range, hoverMessage?: string}[] = [];
   const text = document.getText();
   let matches;
@@ -98,7 +98,15 @@ function updateDecorations(editor: TextEditor | undefined) {
     const range = new Range(startPos, endPos);
     
     // Trim and normalize multi-line commands
-    const command = matches[3].trim();
+    const tickDelimiter = matches[2] || '';
+    let rawCommand = matches[3] || '';
+
+    // Only remove language identifiers for fenced triple-backtick blocks.
+    if (tickDelimiter === '```') {
+      rawCommand = rawCommand.replace(/^\s*[\w-]+\s*\r?\n/, '');
+    }
+
+    const command = rawCommand.trim();
     const terminalName = matches[1] || '';
     const customName = matches[4] || '';
     

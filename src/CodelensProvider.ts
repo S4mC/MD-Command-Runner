@@ -14,10 +14,10 @@ export class CodelensProvider implements vscode.CodeLensProvider {
     // Improved regex using backreferences
     // Detects 'run' at line start or with space before
     // Supports triple backticks for multi-line commands
-    // Optionally ignores language specifiers (bash, python, etc.) after triple backticks
-    // Captures: optional terminal name, backticks (1-3), command (can be multi-line with ```), optional custom display name in parentheses
+    // Captures: optional terminal name, backticks (1-3), raw command, optional custom display name in parentheses
+    // Language specifiers are handled in code only for triple-backtick blocks
     // Examples: run `cmd`, run test`cmd`, run `cmd`(Custom), run terminal```cmd```, run ```npm install```(Name), run ```bash\ncurl...```
-    this.regex = /(?:^|\s)run\s+(?:([\w-]+))?(`{1,3})(?:[\w-]+\s*)?([\s\S]*?)\2(?:\((.*?)\))?/gim;
+    this.regex = /(?:^|\s)run\s+(?:([\w-]+))?(`{1,3})([\s\S]*?)\2(?:\((.*?)\))?/gim;
 
     vscode.workspace.onDidChangeConfiguration((_) => {
       this._onDidChangeCodeLenses.fire();
@@ -61,7 +61,16 @@ export class CodelensProvider implements vscode.CodeLensProvider {
         
         // Extracts the terminal name (if any), the command, and custom display name (if any)
         const terminalName = matches[1] || '';
-        const cmd: string = matches[3].trim(); // Trim to handle multi-line commands
+        const tickDelimiter = matches[2] || '';
+        let rawCmd: string = matches[3] || '';
+
+        // Only remove language identifiers for fenced triple-backtick blocks.
+        // Example: ```bash\nls -la``` => command becomes "ls -la"
+        if (tickDelimiter === '```') {
+          rawCmd = rawCmd.replace(/^\s*[\w-]+\s*\r?\n/, '');
+        }
+
+        const cmd: string = rawCmd.trim(); // Trim to handle multi-line commands
         let customName = matches[4] || ''; // Custom name from parentheses
         
         // Get configuration values

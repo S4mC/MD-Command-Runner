@@ -48,7 +48,7 @@
     },
     "runFencedBash": {
       "name": "markup.fenced_code.block.command-runner.markdown",
-      "begin": "^\\s*(run)\\s+(?:[\\w-]+)?(`{3,})\\s*(bash|sh|shell|zsh)\\s*$",
+      "begin": "^.*?(?<![\\w`])(run)\\s+(?:[\\w-]+)?(`{3,})\\s*(bash|sh|shell|zsh)\\s*$",
       "beginCaptures": {
         "1": {
           "name": "keyword.control.command-runner.markdown"
@@ -75,7 +75,7 @@
     },
     "runFencedPowerShell": {
       "name": "markup.fenced_code.block.command-runner.markdown",
-      "begin": "^\\s*(run)\\s+(?:[\\w-]+)?(`{3,})\\s*(powershell|pwsh|ps1)\\s*$",
+      "begin": "^.*?(?<![\\w`])(run)\\s+(?:[\\w-]+)?(`{3,})\\s*(powershell|pwsh|ps1)\\s*$",
       "beginCaptures": {
         "1": {
           "name": "keyword.control.command-runner.markdown"
@@ -102,7 +102,7 @@
     },
     "runFencedPython": {
       "name": "markup.fenced_code.block.command-runner.markdown",
-      "begin": "^\\s*(run)\\s+(?:[\\w-]+)?(`{3,})\\s*(python|py)\\s*$",
+      "begin": "^.*?(?<![\\w`])(run)\\s+(?:[\\w-]+)?(`{3,})\\s*(python|py)\\s*$",
       "beginCaptures": {
         "1": {
           "name": "keyword.control.command-runner.markdown"
@@ -129,7 +129,7 @@
     },
     "runFencedJavaScript": {
       "name": "markup.fenced_code.block.command-runner.markdown",
-      "begin": "^\\s*(run)\\s+(?:[\\w-]+)?(`{3,})\\s*(javascript|js|node)\\s*$",
+      "begin": "^.*?(?<![\\w`])(run)\\s+(?:[\\w-]+)?(`{3,})\\s*(javascript|js|node)\\s*$",
       "beginCaptures": {
         "1": {
           "name": "keyword.control.command-runner.markdown"
@@ -156,7 +156,7 @@
     },
     "runFencedTypeScript": {
       "name": "markup.fenced_code.block.command-runner.markdown",
-      "begin": "^\\s*(run)\\s+(?:[\\w-]+)?(`{3,})\\s*(typescript|ts)\\s*$",
+      "begin": "^.*?(?<![\\w`])(run)\\s+(?:[\\w-]+)?(`{3,})\\s*(typescript|ts)\\s*$",
       "beginCaptures": {
         "1": {
           "name": "keyword.control.command-runner.markdown"
@@ -183,7 +183,7 @@
     },
     "runFencedGeneric": {
       "name": "markup.fenced_code.block.command-runner.markdown",
-      "begin": "^\\s*(run)\\s+(?:[\\w-]+)?(`{3,})\\s*([\\w+-]*)\\s*$",
+      "begin": "^.*?(?<![\\w`])(run)\\s+(?:[\\w-]+)?(`{3,})\\s*([\\w+-]*)\\s*$",
       "beginCaptures": {
         "1": {
           "name": "keyword.control.command-runner.markdown"
