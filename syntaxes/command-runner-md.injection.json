@@ -1,0 +1,208 @@
+{
+  "scopeName": "command-runner.markdown.injection",
+  "injectionSelector": "L:text.html.markdown",
+  "patterns": [
+    {
+      "include": "#runInlineCommand"
+    },
+    {
+      "include": "#runFencedBash"
+    },
+    {
+      "include": "#runFencedPowerShell"
+    },
+    {
+      "include": "#runFencedPython"
+    },
+    {
+      "include": "#runFencedJavaScript"
+    },
+    {
+      "include": "#runFencedTypeScript"
+    },
+    {
+      "include": "#runFencedGeneric"
+    }
+  ],
+  "repository": {
+    "runInlineCommand": {
+      "name": "meta.inline.command-runner.markdown",
+      "match": "(?<![\\w`])(run)\\s+(?:([\\w-]+))?(`{1,2})([^`\\r\\n]+)\\3(?:\\(([^\\r\\n\\)]*)\\))?",
+      "captures": {
+        "1": {
+          "name": "keyword.control.command-runner.markdown"
+        },
+        "2": {
+          "name": "entity.name.label.command-runner.markdown"
+        },
+        "3": {
+          "name": "punctuation.definition.raw.markdown"
+        },
+        "4": {
+          "name": "string.unquoted.command-runner.markdown"
+        },
+        "5": {
+          "name": "entity.name.function.command-runner.markdown"
+        }
+      }
+    },
+    "runFencedBash": {
+      "name": "markup.fenced_code.block.command-runner.markdown",
+      "begin": "^\\s*(run)\\s+(?:[\\w-]+)?(`{3,})\\s*(bash|sh|shell|zsh)\\s*$",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.command-runner.markdown"
+        },
+        "2": {
+          "name": "punctuation.definition.markdown"
+        },
+        "3": {
+          "name": "fenced_code.block.language.markdown"
+        }
+      },
+      "contentName": "meta.embedded.block.command-runner.shell",
+      "end": "^\\s*(\\2)\\s*(?:\\([^\\)]*\\))?\\s*$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.markdown"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.shell"
+        }
+      ]
+    },
+    "runFencedPowerShell": {
+      "name": "markup.fenced_code.block.command-runner.markdown",
+      "begin": "^\\s*(run)\\s+(?:[\\w-]+)?(`{3,})\\s*(powershell|pwsh|ps1)\\s*$",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.command-runner.markdown"
+        },
+        "2": {
+          "name": "punctuation.definition.markdown"
+        },
+        "3": {
+          "name": "fenced_code.block.language.markdown"
+        }
+      },
+      "contentName": "meta.embedded.block.command-runner.powershell",
+      "end": "^\\s*(\\2)\\s*(?:\\([^\\)]*\\))?\\s*$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.markdown"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.powershell"
+        }
+      ]
+    },
+    "runFencedPython": {
+      "name": "markup.fenced_code.block.command-runner.markdown",
+      "begin": "^\\s*(run)\\s+(?:[\\w-]+)?(`{3,})\\s*(python|py)\\s*$",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.command-runner.markdown"
+        },
+        "2": {
+          "name": "punctuation.definition.markdown"
+        },
+        "3": {
+          "name": "fenced_code.block.language.markdown"
+        }
+      },
+      "contentName": "meta.embedded.block.command-runner.python",
+      "end": "^\\s*(\\2)\\s*(?:\\([^\\)]*\\))?\\s*$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.markdown"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.python"
+        }
+      ]
+    },
+    "runFencedJavaScript": {
+      "name": "markup.fenced_code.block.command-runner.markdown",
+      "begin": "^\\s*(run)\\s+(?:[\\w-]+)?(`{3,})\\s*(javascript|js|node)\\s*$",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.command-runner.markdown"
+        },
+        "2": {
+          "name": "punctuation.definition.markdown"
+        },
+        "3": {
+          "name": "fenced_code.block.language.markdown"
+        }
+      },
+      "contentName": "meta.embedded.block.command-runner.javascript",
+      "end": "^\\s*(\\2)\\s*(?:\\([^\\)]*\\))?\\s*$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.markdown"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.js"
+        }
+      ]
+    },
+    "runFencedTypeScript": {
+      "name": "markup.fenced_code.block.command-runner.markdown",
+      "begin": "^\\s*(run)\\s+(?:[\\w-]+)?(`{3,})\\s*(typescript|ts)\\s*$",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.command-runner.markdown"
+        },
+        "2": {
+          "name": "punctuation.definition.markdown"
+        },
+        "3": {
+          "name": "fenced_code.block.language.markdown"
+        }
+      },
+      "contentName": "meta.embedded.block.command-runner.typescript",
+      "end": "^\\s*(\\2)\\s*(?:\\([^\\)]*\\))?\\s*$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.markdown"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.ts"
+        }
+      ]
+    },
+    "runFencedGeneric": {
+      "name": "markup.fenced_code.block.command-runner.markdown",
+      "begin": "^\\s*(run)\\s+(?:[\\w-]+)?(`{3,})\\s*([\\w+-]*)\\s*$",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.command-runner.markdown"
+        },
+        "2": {
+          "name": "punctuation.definition.markdown"
+        },
+        "3": {
+          "name": "fenced_code.block.language.markdown"
+        }
+      },
+      "contentName": "meta.embedded.block.command-runner",
+      "end": "^\\s*(\\2)\\s*(?:\\([^\\)]*\\))?\\s*$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.markdown"
+        }
+      },
+      "patterns": []
+    }
+  }
+}

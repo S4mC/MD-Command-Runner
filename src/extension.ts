@@ -21,18 +21,25 @@ let codelensProviderInstance: CodelensProvider | undefined;
 // Function to create decoration style based on configuration
 function createDecorationType(): TextEditorDecorationType {
   const config = workspace.getConfiguration("command-runner");
+  const decorationStyle = config.get<string>("decorationStyle", "background");
   const borderColor = config.get("decorationBorderColor", "#569cd6");
   const backgroundColor = config.get("decorationBackgroundColor", "rgba(86, 156, 214, 0.1)");
-  const showHoverInfo = config.get("showHoverInfo", true);
-  
-  const decorationType = window.createTextEditorDecorationType({
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: borderColor,
-    backgroundColor: backgroundColor,
-    borderRadius: '3px',
-    isWholeLine: false,
-  });
+
+  const decorationType = window.createTextEditorDecorationType(
+    decorationStyle === "outline"
+      ? {
+          borderWidth: "1px",
+          borderStyle: "solid",
+          borderColor: borderColor,
+          backgroundColor: backgroundColor,
+          borderRadius: "3px",
+          isWholeLine: false,
+        }
+      : {
+          backgroundColor: backgroundColor,
+          isWholeLine: true,
+        }
+  );
   
   return decorationType;
 }

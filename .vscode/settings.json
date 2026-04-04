@@ -11,7 +11,8 @@
         "package-lock.json": true,
         "tsconfig.json": true,
         ".mocharc.json": true,
-        "eslint.config.mjs": true
+        "eslint.config.mjs": true,
+        "node_modules": true
     },
     "search.exclude": {
         "out": true // set this to false to include "out" folder in search results

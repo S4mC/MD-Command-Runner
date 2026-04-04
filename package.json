@@ -3,7 +3,7 @@
   "displayName": "MD Command Runner",
   "description": "Run commands in the terminal from markdowns files with custom display names and named terminals.",
   "publisher": "s4mu31",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "license": "MIT",
   "icon": "icon.png",
   "engines": {
@@ -64,7 +64,16 @@
         "command-runner.enableDecorations": {
           "type": "boolean",
           "default": true,
-          "description": "Enable or disable decorative borders around commands"
+          "description": "Enable or disable visual decorations around commands"
+        },
+        "command-runner.decorationStyle": {
+          "type": "string",
+          "default": "background",
+          "enum": [
+            "background",
+            "outline"
+          ],
+          "description": "Choose how commands are decorated: subtle full-line background or outlined box"
         },
         "command-runner.showHoverInfo": {
           "type": "boolean",
@@ -110,7 +119,23 @@
           "description": "Maximum length for custom display names before truncation"
         }
       }
-    }
+    },
+    "grammars": [
+      {
+        "scopeName": "command-runner.markdown.injection",
+        "path": "./syntaxes/command-runner-md.injection.json",
+        "injectTo": [
+          "text.html.markdown"
+        ],
+        "embeddedLanguages": {
+          "meta.embedded.block.command-runner.shell": "shellscript",
+          "meta.embedded.block.command-runner.powershell": "powershell",
+          "meta.embedded.block.command-runner.python": "python",
+          "meta.embedded.block.command-runner.javascript": "javascript",
+          "meta.embedded.block.command-runner.typescript": "typescript"
+        }
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

@@ -4,6 +4,27 @@ All notable changes to the "command-runner" extension will be documented in this
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.5.3] - 2026-04-04
+
+### Added
+- **Decoration Style Mode:** New setting `command-runner.decorationStyle`
+  - `background` for subtle full-line highlighting
+  - `outline` for boxed command highlighting
+- **Markdown Editor Grammar Injection:** Added custom Markdown injection grammar for Command Runner syntax
+  - Recognizes fenced command blocks with `run` prefix and optional terminal names
+  - Supports language-aware highlighting for common fenced languages (`bash`, `powershell`, `python`, `javascript`, `typescript`)
+  - Supports custom fence closing syntax with optional display names in parentheses
+- **Inline Command Highlighting in Markdown:** Added syntax highlighting for inline Command Runner commands
+  - Supports inline run syntax using one or two backticks
+  - Supports named terminals before the command expression
+  - Supports optional custom names at the end in parentheses
+  - Works both at line start and when embedded in normal Markdown text
+
+### Changed
+- **Decoration Defaults:** Decorations now default to a less saturated background style instead of per-command outlined boxes
+- Updated decoration setting descriptions to reflect style-based behavior
+- Updated documentation to include the new decoration mode and Markdown editor syntax support
+
 ## [0.5.0] - 2025-11-13
 
 ### Added

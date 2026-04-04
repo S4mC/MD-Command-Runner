@@ -72,11 +72,12 @@ run `echo Current file: ${fileBasename}`
 - Supports single (\`command\`), double (\``command``), and triple (\```command```) backticks
 - **Custom display names** - personalize button text with parentheses syntax
 - **Customizable icons** - choose from multiple icon options (▶︎, ⚡, 🚀, etc.)
-- **Visual decorations** - commands highlighted with customizable borders
+- **Visual decorations** - commands highlighted with subtle background or outlined style
 - **Hover information** - see execution statistics on hover
 - **Command history** - track and re-execute previous commands
 - **Variable substitution** - use `${workspaceFolder}`, `${file}`, and more
 - **Safety features** - confirmation for dangerous commands
+- **Markdown editor syntax support for multiline run blocks** - `run ```bash ... ```(Name)` keeps fenced block highlighting in `.md`
 
 ## Configuration
 
@@ -91,13 +92,16 @@ run `echo Current file: ${fileBasename}`
 ### Decoration Settings
 
 - **`command-runner.enableDecorations`** (default: `true`)  
-  Enable or disable the decorative border around commands
+  Enable or disable command decorations
+
+- **`command-runner.decorationStyle`** (default: `"background"`)  
+  Choose style: `"background"` (subtle full-line highlight) or `"outline"` (boxed command)
 
 - **`command-runner.showHoverInfo`** (default: `true`)  
   Show execution statistics when hovering over commands
 
 - **`command-runner.decorationBorderColor`** (default: `"#569cd6"`)  
-  Border color for command decorations (hex color codes)
+  Border color for `"outline"` style decorations (hex color codes)
 
 - **`command-runner.decorationBackgroundColor`** (default: `"rgba(86, 156, 214, 0.1)"`)  
   Background color for command decorations
@@ -150,6 +154,7 @@ Add these settings to your `settings.json`:
 ```json
 {
   "command-runner.enableDecorations": true,
+  "command-runner.decorationStyle": "background",
   "command-runner.showHoverInfo": true,
   "command-runner.codeLensIcon": "🚀",
   "command-runner.decorationBorderColor": "#4ec9b0",
