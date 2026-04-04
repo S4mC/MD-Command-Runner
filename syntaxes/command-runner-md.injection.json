@@ -61,10 +61,13 @@
         }
       },
       "contentName": "meta.embedded.block.command-runner.shell",
-      "end": "^\\s*(\\2)\\s*(?:\\([^\\)]*\\))?\\s*$",
+      "end": "^\\s*(\\2)\\s*(?:\\(([^\\)]*)\\))?\\s*$",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.markdown"
+        },
+        "2": {
+          "name": "entity.name.function.command-runner.markdown"
         }
       },
       "patterns": [
@@ -88,10 +91,13 @@
         }
       },
       "contentName": "meta.embedded.block.command-runner.powershell",
-      "end": "^\\s*(\\2)\\s*(?:\\([^\\)]*\\))?\\s*$",
+      "end": "^\\s*(\\2)\\s*(?:\\(([^\\)]*)\\))?\\s*$",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.markdown"
+        },
+        "2": {
+          "name": "entity.name.function.command-runner.markdown"
         }
       },
       "patterns": [
@@ -115,10 +121,13 @@
         }
       },
       "contentName": "meta.embedded.block.command-runner.python",
-      "end": "^\\s*(\\2)\\s*(?:\\([^\\)]*\\))?\\s*$",
+      "end": "^\\s*(\\2)\\s*(?:\\(([^\\)]*)\\))?\\s*$",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.markdown"
+        },
+        "2": {
+          "name": "entity.name.function.command-runner.markdown"
         }
       },
       "patterns": [
@@ -142,10 +151,13 @@
         }
       },
       "contentName": "meta.embedded.block.command-runner.javascript",
-      "end": "^\\s*(\\2)\\s*(?:\\([^\\)]*\\))?\\s*$",
+      "end": "^\\s*(\\2)\\s*(?:\\(([^\\)]*)\\))?\\s*$",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.markdown"
+        },
+        "2": {
+          "name": "entity.name.function.command-runner.markdown"
         }
       },
       "patterns": [
@@ -169,10 +181,13 @@
         }
       },
       "contentName": "meta.embedded.block.command-runner.typescript",
-      "end": "^\\s*(\\2)\\s*(?:\\([^\\)]*\\))?\\s*$",
+      "end": "^\\s*(\\2)\\s*(?:\\(([^\\)]*)\\))?\\s*$",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.markdown"
+        },
+        "2": {
+          "name": "entity.name.function.command-runner.markdown"
         }
       },
       "patterns": [
@@ -196,10 +211,13 @@
         }
       },
       "contentName": "meta.embedded.block.command-runner",
-      "end": "^\\s*(\\2)\\s*(?:\\([^\\)]*\\))?\\s*$",
+      "end": "^\\s*(\\2)\\s*(?:\\(([^\\)]*)\\))?\\s*$",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.markdown"
+        },
+        "2": {
+          "name": "entity.name.function.command-runner.markdown"
         }
       },
       "patterns": []
