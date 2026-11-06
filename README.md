@@ -60,8 +60,8 @@ run dev`npm run dev`(Start Development)
 run test`npm test -- --watch`(Watch Tests)
 
 # Variable substitution
-run `cd ${workspaceFolder} && npm test`
-run `echo Current file: ${fileBasename}`
+run `cd "${workspaceFolder}" && npm test`
+run `echo "Current file: ${fileBasename}"`
 ````
 
 ## Features
@@ -76,7 +76,7 @@ run `echo Current file: ${fileBasename}`
 - **Hover information** - see execution statistics on hover
 - **Command history** - track and re-execute previous commands
 - **Variable substitution** - use `${workspaceFolder}`, `${file}`, and more
-- **Safety features** - confirmation for dangerous commands
+- **Safety features** - optional confirmation for recognized dangerous commands; workspace trust and terminal control-character checks
 - **Markdown editor syntax support for multiline run blocks** - `run ```bash ... ```(Name)` keeps fenced block highlighting in `.md`
 
 ## Configuration
@@ -108,8 +108,14 @@ run `echo Current file: ${fileBasename}`
 
 ### Safety & Behavior
 
-- **`command-runner.confirmDangerousCommands`** (default: `true`)  
-  Confirm before executing dangerous commands
+Commands written by the user execute without confirmation by default, including commands selected from history. Commands require a trusted workspace, in accordance with [VS Code Workspace Trust](https://code.visualstudio.com/api/extension-guides/workspace-trust).
+
+Commands containing terminal control sequences, tabs, standalone carriage returns or text direction overrides are rejected. Use spaces for indentation. Commands are limited to 16,384 characters and terminal names to 100 characters. Multiline commands preserve their original shell syntax, with CRLF normalized to LF.
+
+- **`command-runner.confirmDangerousCommands`** (default: `false`)
+  Enable confirmation for commands matching known dangerous patterns. Only an explicit user-level `true` enables this prompt. When enabled, the dialog shows the full expanded command and target terminal. Other commands execute directly. Pattern matching does not determine whether arbitrary shell code is safe.
+
+Commands are retained in session memory for history and statistics. They are not written to the extension console, and the extension's command history is cleared when it is deactivated. Avoid including secrets in command text: the terminal and its shell may retain their own history.
 
 ### Display Settings
 
@@ -136,11 +142,13 @@ Use these variables in your commands:
 
 **Examples:**
 ```markdown
-run `cd ${workspaceFolder} && npm test`
-run `echo Current file: ${fileBasename}`
-run `ls ${fileDirname}`
-run `code ${file}`
+run `cd "${workspaceFolder}" && npm test`
+run `echo "Current file: ${fileBasename}"`
+run `ls "${fileDirname}"`
+run `code "${file}"`
 ```
+
+Variable values are inserted once as literal text. Quote paths containing spaces for your shell. Unavailable variables and values containing shell metacharacters (such as quotes, `$`, backticks, `&`, `;`, parentheses or `%`) are rejected because safe escaping depends on the shell and surrounding command syntax. Rename such files or write and review an explicitly escaped command for your shell.
 
 ## Commands
 
@@ -159,7 +167,7 @@ Add these settings to your `settings.json`:
   "command-runner.codeLensIcon": "🚀",
   "command-runner.decorationBorderColor": "#4ec9b0",
   "command-runner.decorationBackgroundColor": "rgba(78, 201, 176, 0.15)",
-  "command-runner.confirmDangerousCommands": true,
+  "command-runner.confirmDangerousCommands": false,
   "command-runner.refreshInterval": 10,
   "command-runner.maxDisplayLength": 20,
   "command-runner.maxCustomNameLength": 60

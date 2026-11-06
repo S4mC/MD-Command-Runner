@@ -1,10 +1,12 @@
 import * as path from 'path';
-import * as Mocha from 'mocha';
 import { glob } from 'glob';
+
+// Mocha 12 exports its constructor as default; @types/mocha still uses export =.
+const mochaConstructor: typeof import('mocha') = require('mocha').default;
 
 export function run(): Promise<void> {
 	// Create the mocha test
-	const mocha = new Mocha({
+	const mocha = new mochaConstructor({
 		ui: 'tdd',
 		color: true
 	});

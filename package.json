@@ -31,6 +31,12 @@
     "onLanguage:plaintext"
   ],
   "main": "./out/extension.js",
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false,
+      "description": "Executing commands from documents requires a trusted workspace."
+    }
+  },
   "contributes": {
     "commands": [
       {
@@ -98,8 +104,9 @@
         },
         "command-runner.confirmDangerousCommands": {
           "type": "boolean",
-          "default": true,
-          "description": "Ask for confirmation before executing potentially dangerous commands"
+          "default": false,
+          "scope": "application",
+          "description": "Ask for confirmation before executing recognized dangerous commands. Disabled unless explicitly enabled by the user."
         },
         "command-runner.refreshInterval": {
           "type": "number",
@@ -149,13 +156,19 @@
     "@types/vscode": "^1.104.0",
     "@types/glob": "^9.0.0",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^24.6.2",
-    "eslint": "^9.37.0",
-    "@typescript-eslint/eslint-plugin": "^8.45.0",
-    "@typescript-eslint/parser": "^8.45.0",
-    "glob": "^11.0.3",
-    "mocha": "^11.7.4",
+    "@types/node": "^26.6.6",
+    "eslint": "^10.14.0",
+    "@typescript-eslint/eslint-plugin": "^8.72.1",
+    "@typescript-eslint/parser": "^8.72.1",
+    "glob": "^14.0.4",
+    "mocha": "^12.0.3",
     "typescript": "^5.9.3",
-    "vscode-test": "^1.6.1"
+    "@vscode/test-electron": "^3.1.0"
+  },
+  "overrides": {
+    "minimatch": "^11.0.5",
+    "mocha": {
+      "glob": "$glob"
+    }
   }
 }

@@ -15,6 +15,9 @@ export class Terminal {
   static commandHistory: CommandHistoryEntry[] = [];
   static maxHistorySize: number = 50;
   static commandStats: Map<string, { count: number; lastExecuted: Date }> = new Map();
+  // Reject terminal escape sequences, control keys and text direction overrides.
+  // Only LF/CRLF line endings are allowed as command control characters.
+  private static readonly unsafeCharacters = /[\u0000-\u0009\u000b-\u001f\u007f-\u009f\u061c\u200e\u200f\u2028-\u202e\u2066-\u2069]/;
 
   static initialize() {
     // Register the close terminal listener only once
@@ -90,10 +93,10 @@ export class Terminal {
     const editor = vscode.window.activeTextEditor;
     const workspaceFolders = vscode.workspace.workspaceFolders;
     
-    // Replace workspace variables
+    const variables = new Map<string, string>();
     if (workspaceFolders && workspaceFolders.length > 0) {
-      command = command.replace(/\$\{workspaceFolder\}/g, workspaceFolders[0].uri.fsPath);
-      command = command.replace(/\$\{workspaceFolderBasename\}/g, workspaceFolders[0].name);
+      variables.set('workspaceFolder', workspaceFolders[0].uri.fsPath);
+      variables.set('workspaceFolderBasename', workspaceFolders[0].name);
     }
     
     // Replace file-related variables
@@ -103,22 +106,35 @@ export class Terminal {
       const fileBasename = fileName.replace(/\.[^.]*$/, '');
       const fileDirname = filePath.substring(0, Math.max(filePath.lastIndexOf('\\'), filePath.lastIndexOf('/')));
       
-      command = command.replace(/\$\{file\}/g, filePath);
-      command = command.replace(/\$\{fileBasename\}/g, fileName);
-      command = command.replace(/\$\{fileBasenameNoExtension\}/g, fileBasename);
-      command = command.replace(/\$\{fileDirname\}/g, fileDirname);
-      command = command.replace(/\$\{relativeFile\}/g, 
-        workspaceFolders ? vscode.workspace.asRelativePath(filePath) : filePath);
+      variables.set('file', filePath);
+      variables.set('fileBasename', fileName);
+      variables.set('fileBasenameNoExtension', fileBasename);
+      variables.set('fileDirname', fileDirname);
+      variables.set('relativeFile', workspaceFolders ? vscode.workspace.asRelativePath(filePath) : filePath);
     }
-    
-    return command;
+
+    // Use literal replacement in a single pass, without interpreting replacement
+    // patterns or introducing further extension variable expansions.
+    return command.replace(/\$\{(workspaceFolder|workspaceFolderBasename|file|fileBasename|fileBasenameNoExtension|fileDirname|relativeFile)\}/g, (match, name: string) => {
+      const value = variables.get(name);
+      if (value === undefined) {
+        throw new Error(`Variable \${${name}} is unavailable in the current editor or workspace`);
+      }
+      // The terminal's shell and the surrounding quote context are arbitrary.
+      // Refuse shell syntax in path values instead of attempting unsafe quoting.
+      // Ordinary spaces are permitted; commands must quote paths containing them.
+      if (/[^\S ]|["'`$&;|<>(){}\[\]*?!~#%^]/u.test(value) || Terminal.unsafeCharacters.test(value)) {
+        throw new Error(`Variable \${${name}} contains characters that are unsafe for shell substitution`);
+      }
+      return value;
+    });
   }
 
   static _isDangerousCommand(command: string): boolean {
     const config = vscode.workspace.getConfiguration("command-runner");
-    const enabled = config.get("confirmDangerousCommands", true);
+    const enabled = config.get<boolean>("confirmDangerousCommands", false);
     
-    if (!enabled) {
+    if (enabled !== true) {
       return false;
     }
     
@@ -140,26 +156,36 @@ export class Terminal {
     return dangerousPatterns.some(pattern => pattern.test(command));
   }
 
-  static async run(command: string, terminalName: string = '') {
+  static async run(command: string, terminalName: string = ''): Promise<boolean> {
     try {
-      if (!command || command.trim() === '') {
-        vscode.window.showWarningMessage('Command Runner: Cannot execute an empty command');
-        return;
+      if (!vscode.workspace.isTrusted) {
+        vscode.window.showWarningMessage('Command Runner: Trust this workspace before executing commands');
+        return false;
       }
 
-      // Replace variables
-      const processedCommand = Terminal._replaceVariables(command);
-      
-      // Check if command is dangerous
+      if (typeof command !== 'string' || command.trim() === '' || typeof terminalName !== 'string') {
+        vscode.window.showWarningMessage('Command Runner: Command must be a non-empty string and terminal name must be a string');
+        return false;
+      }
+
+      const processedCommand = Terminal._replaceVariables(command).replace(/\r\n/g, '\n');
+      if (processedCommand.length > 16384 || terminalName.length > 100 ||
+          Terminal.unsafeCharacters.test(processedCommand) || /[\r\n\t]/.test(terminalName) ||
+          Terminal.unsafeCharacters.test(terminalName)) {
+        vscode.window.showWarningMessage('Command Runner: Command or terminal name is too long or contains unsafe control characters');
+        return false;
+      }
+
+      // Commands are authored by the user. Confirm recognized dangerous commands
+      // only when the user explicitly enables this optional safeguard.
       if (Terminal._isDangerousCommand(processedCommand)) {
         const answer = await vscode.window.showWarningMessage(
-          `⚠️ This command may be dangerous: \`${processedCommand}\`\n\nAre you sure you want to execute it?`,
-          { modal: true },
+          'Command Runner: This command may be dangerous. Execute it?',
+          { modal: true, detail: `Terminal: ${terminalName || Terminal.defaultTermName}\n\n${processedCommand}` },
           'Execute'
         );
-        
-        if (answer !== 'Execute') {
-          return;
+        if (answer !== 'Execute' || !vscode.workspace.isTrusted) {
+          return false;
         }
       }
 
@@ -171,31 +197,17 @@ export class Terminal {
         term = Terminal._getDefaultTerm();
       }
 
-      console.log(processedCommand);
-      // Check if command has multiple lines
-      const lines = processedCommand.split(/\r?\n/).filter(line => line.trim() !== '');
-      
-      if (lines.length > 1) {
-        // Execute each line separately to simulate pasting multiple commands
-        let commandToSend = '';
-        for (const line of lines) {
-          if (line.trim() === '' || line.trim().startsWith('#') || line.trim().startsWith('//') || line.trim().startsWith('--') || line.trim().startsWith('REM')) {
-            continue;
-          }
-          commandToSend += line.trim() + ';'; // Use semicolon to separate commands, because new lines execute immediately
-        }
-        term.sendText(commandToSend, true);
-      } else {
-        // Single line command
-        term.sendText(processedCommand, true);
-      }
+      // Preserve quotes, comments, continuations and conditional execution.
+      // Joining lines with semicolons can change which commands are executed.
+      term.sendText(processedCommand, true);
       
       // Track command history
       Terminal._addToHistory(processedCommand, terminalName);
+      return true;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       vscode.window.showErrorMessage(`Command Runner: Failed to execute command - ${errorMessage}`);
-      console.error('Command Runner error:', error);
+      return false;
     }
   }
 
@@ -246,5 +258,6 @@ export class Terminal {
       term.dispose();
     }
     Terminal.namedTerminals.clear();
+    Terminal.clearHistory();
   }
 }

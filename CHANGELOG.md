@@ -4,6 +4,17 @@ All notable changes to the "command-runner" extension will be documented in this
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [Unreleased]
+
+### Security
+- Make dangerous-command confirmation opt-in through the user-level `command-runner.confirmDangerousCommands` setting (default: `false`); show the complete expanded command and target terminal only when confirmation is enabled and a dangerous pattern matches.
+- Explicitly declare Workspace Trust requirements and check trust before execution and after confirmation.
+- Reject terminal control characters, text direction overrides, oversized input and shell metacharacters in substituted path values.
+- Substitute variables in a single pass and fail when an extension variable is unavailable.
+- Preserve multiline shell syntax rather than rewriting lines with semicolons.
+- Remove command text from extension console logging and clear terminal history on disposal.
+- Record execution statistics only after a command is sent successfully.
+
 ## [0.5.3] - 2026-04-04
 
 ### Added

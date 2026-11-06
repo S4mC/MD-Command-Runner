@@ -208,9 +208,11 @@ export function activate(context: ExtensionContext) {
       .update("enableCodeLens", false, true);
   });
 
-  commands.registerCommand("command-runner.codelensAction", (command: string, terminalName?: string) => {
+  commands.registerCommand("command-runner.codelensAction", async (command: string, terminalName?: string) => {
+    if (!await Terminal.run(command, terminalName)) {
+      return;
+    }
     trackCommandExecution(command);
-    Terminal.run(command, terminalName);
     // Update decorations and CodeLens to reflect new execution history
     if (window.activeTextEditor) {
       setTimeout(() => {
@@ -254,7 +256,9 @@ export function activate(context: ExtensionContext) {
     });
 
     if (selected) {
-      Terminal.run(selected.command, selected.terminalName);
+      if (!await Terminal.run(selected.command, selected.terminalName)) {
+        return;
+      }
       // Refresh after execution
       setTimeout(() => {
         if (window.activeTextEditor) {
@@ -322,6 +326,7 @@ export function deactivate() {
   
   // Dispose Terminal resources
   Terminal.dispose();
+  commandHistory.clear();
   
   if (disposables) {
     disposables.forEach((item) => item.dispose());
